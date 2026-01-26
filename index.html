@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Подбор МЧД</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { font-size: 19px; color: #333; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .step { display: none; }
+        .step.active { display: block; }
+        .option { display: flex; align-items: center; padding: 12px; margin-bottom: 8px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
+        input[type="checkbox"] { width: 18px; height: 18px; margin-right: 12px; }
+        button { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .result-box { margin-top: 20px; padding: 20px; border: 2px solid #28a745; border-radius: 12px; }
+        #total { font-size: 50px; font-weight: bold; color: #28a745; text-align: center; display: block; }
+        .details { font-size: 14px; color: #444; line-height: 1.6; margin-top: 15px; }
+        .method { font-weight: bold; color: #d63031; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="step-1" class="step active">
+        <h2>Шаг 1: Сервисы</h2>
+        <label class="option"><input type="checkbox" id="srv-1c"> 1С:Отчетность</label>
+        <label class="option"><input type="checkbox" id="srv-astral"> Астрал Отчет</label>
+        <label class="option"><input type="checkbox" id="srv-doki"> Доки</label>
+        <label class="option"><input type="checkbox" id="srv-edo"> 1С:ЭДО</label>
+        <label class="option"><input type="checkbox" id="srv-cz"> Честный знак</label>
+        <label class="option"><input type="checkbox" id="srv-egais"> ЕГАИС</label>
+        <label class="option"><input type="checkbox" id="srv-t44"> Торги по 44-ФЗ (ЕИС)</label>
+        <label class="option"><input type="checkbox" id="srv-t223"> Торги по 223-ФЗ</label>
+        <button onclick="goNext()">Далее</button>
+    </div>
+
+    <div id="step-2" class="step">
+        <h2>Шаг 2: Направления</h2>
+        <label class="option"><input type="checkbox" class="dir-003" data-name="ФНС"> ФНС</label>
+        <label class="option"><input type="checkbox" class="dir-003" data-name="Росстат"> Росстат</label>
+        <label class="option"><input type="checkbox" class="dir-003" data-name="ФТС"> ФТС</label>
+        <label class="option"><input type="checkbox" class="dir-003" data-name="ФСРАР"> ФСРАР</label>
+        <label class="option"><input type="checkbox" id="dir-sfr"> СФР</label>
+        <button onclick="calculate()">Показать результат</button>
+    </div>
+
+    <div id="step-3" class="step">
+        <h2>Результат</h2>
+        <div class="result-box">
+            <div style="text-align:center">Количество МЧД:</div>
+            <span id="total">0</span>
+            <div id="details" class="details"></div>
+        </div>
+        <button onclick="location.reload()" style="background:#6c757d">Начать заново</button>
+    </div>
+</div>
+
+<script>
+    function goNext() {
+        const s1c = document.getElementById('srv-1c').checked;
+        const sAstral = document.getElementById('srv-astral').checked;
+        if (s1c || sAstral) {
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+        } else {
+            calculate();
+        }
+    }
+
+    function calculate() {
+        const s = {
+            c1: document.getElementById('srv-1c').checked,
+            astral: document.getElementById('srv-astral').checked,
+            doki: document.getElementById('srv-doki').checked,
+            edo: document.getElementById('srv-edo').checked,
+            cz: document.getElementById('srv-cz').checked,
+            egais: document.getElementById('srv-egais').checked,
+            t44: document.getElementById('srv-t44').checked,
+            t223: document.getElementById('srv-t223').checked
+        };
+        const d = {
+            f003: Array.from(document.querySelectorAll('.dir-003:checked')).map(i => i.getAttribute('data-name')),
+            sfr: document.getElementById('dir-sfr').checked
+        };
+
+        let total = 0;
+        let resLines = [];
+
+        // --- 1. Формат ЕИС (Торги 44-ФЗ) ---
+        if (s.t44) {
+            total++;
+            resLines.push(`• <b>1 МЧД — Формат ЕИС</b> для: Торги по 44-ФЗ (ЕИС).<br>Делается через: <span class="method">Личный кабинет ЕИС</span>`);
+        }
+
+        // --- 2. Формат СФР ---
+        if (d.sfr) {
+            total++;
+            let sfrMethod = (s.c1 && !s.astral) ? "1С:Отчетность" : "Астрал Доверенность";
+            resLines.push(`• <b>1 МЧД — Формат СФР</b> для: СФР.<br>Делается через: <span class="method">${sfrMethod}</span>`);
+        }
+
+        // --- 3. Формат 003 (Классификатор) ---
+        let list003Class = [...d.f003];
+        if (s.doki) list003Class.push("Доки");
+        if (s.cz) list003Class.push("Честный знак");
+        if (s.egais) list003Class.push("ЕГАИС");
+
+        // Логика перехода ЭДО в классификатор (если выбран кто-то еще из классификатора или отчетность)
+        let isEdoClassic = s.edo && (s.c1 || s.astral || s.doki || s.cz || s.egais || d.f003.length > 0);
+        if (isEdoClassic) list003Class.push("1С:ЭДО");
+
+        if (list003Class.length > 0) {
+            total++;
+            let method = (s.c1 && !s.astral) ? "1С:Отчетность" : "Астрал Доверенность";
+            resLines.push(`• <b>1 МЧД — Формат 003 (полномочия из классификатора)</b> для: ${list003Class.join(", ")}.<br>Делается через: <span class="method">${method}</span>`);
+        }
+
+        // --- 4. Формат 003 (Свободная форма) ---
+        let list003Free = [];
+        if (s.t223) list003Free.push("Торги по 223-ФЗ");
+        if (s.edo && !isEdoClassic) list003Free.push("1С:ЭДО");
+
+        if (list003Free.length > 0) {
+            total++;
+            let freeMethod = "Астрал Доверенность"; // По умолчанию для 223-ФЗ
+            if (list003Free.length === 1 && list003Free[0] === "1С:ЭДО") {
+                freeMethod = "1С-ЭДО";
+            }
+            resLines.push(`• <b>1 МЧД — Формат 003 (полномочия в свободной форме)</b> для: ${list003Free.join(", ")}.<br>Делается через: <span class="method">${freeMethod}</span>`);
+        }
+
+        document.getElementById('total').innerText = total;
+        document.getElementById('details').innerHTML = resLines.join("<br><br>");
+        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+        document.getElementById('step-3').classList.add('active');
+    }
+</script>
+</body>
+</html>
