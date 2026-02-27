@@ -2,44 +2,64 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="icon.png" type="image/png">
-    <title>Подбор МЧД</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2 { font-size: 19px; color: #333; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .step { display: none; }
-        .step.active { display: block; }
-        .option { display: flex; align-items: center; padding: 12px; margin-bottom: 8px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
-        input[type="checkbox"] { width: 18px; height: 18px; margin-right: 12px; }
-        button { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        
-        .result-box { margin-top: 20px; padding: 20px; border: 2px solid #28a745; border-radius: 12px; }
-        #total { font-size: 50px; font-weight: bold; color: #28a745; text-align: center; display: block; }
-        .res-head { text-align: center; color: #000; font-weight: normal; margin-bottom: 5px; }
-        
-        .details { font-size: 14px; color: #444; line-height: 1.6; margin-top: 15px; }
-        .method { font-weight: bold; color: #d63031; }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <title>Калькулятор МЧД</title>
 </head>
 <body>
 
 <div class="card">
     <div id="step-1" class="step active">
-        <h2>В каких сервисах будет использоваться мчд?</h2>
-        <label class="option"><input type="checkbox" id="srv-1c"> 1С:Отчетность</label>
-        <label class="option"><input type="checkbox" id="srv-astral"> Астрал Отчет</label>
-        <label class="option"><input type="checkbox" id="srv-doki"> Доки</label>
-        <label class="option"><input type="checkbox" id="srv-edo"> 1С:ЭДО</label>
-        <label class="option"><input type="checkbox" id="srv-cz"> Честный знак</label>
-        <label class="option"><input type="checkbox" id="srv-egais"> ЕГАИС</label>
-        <label class="option"><input type="checkbox" id="srv-t44"> Торги по 44-ФЗ (ЕИС)</label>
-        <label class="option"><input type="checkbox" id="srv-t223"> Торги по 223-ФЗ</label>
+        <h2>В каких сервисах будет использоваться МЧД?</h2>
+        
+        <div class="search-container">
+    <div class="search-wrapper">
+        <div id="search-icon-container" onclick="clearSearch()">
+            <svg id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <svg id="icon-clear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+        <input type="text" id="srv-search" placeholder="Поиск сервиса..." onkeyup="filterServices()">
+    </div>
+</div>
+
+        <div class="selection-container">
+            <div class="scroll-container" id="services-list">
+                <label class="option"><input type="checkbox" id="srv-1c"> 1С:Отчетность</label>
+                <label class="option"><input type="checkbox" id="srv-astral"> Астрал Отчет</label>
+                <label class="option"><input type="checkbox" id="srv-doki"> Доки</label>
+                <label class="option"><input type="checkbox" id="srv-edo"> 1С:ЭДО</label>
+                <label class="option"><input type="checkbox" id="srv-cz"> Честный знак</label>
+                <label class="option"><input type="checkbox" id="srv-egais"> ЕГАИС</label>
+                <label class="option"><input type="checkbox" id="srv-t44"> Торги по 44-ФЗ (ЕИС)</label>
+                <label class="option"><input type="checkbox" id="srv-t223"> Торги по 223-ФЗ</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="Росприроднадзор"> Росприроднадзор</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="Роскомнадзор"> Роскомнадзор</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="Казначейство"> Казначейство</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="ГИИС Электронный бюджет"> ГИИС Электронный бюджет</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="ГИИС ДМДК"> ГИИС "ДМДК"</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="Банк России (ЦБ)"> Банк России (ЦБ)</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="ФГИС ЛК"> ФГИС ЛК</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="ФГИС ВетИС (Меркурий)"> ФГИС ВетИС (Меркурий)</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="ФГИС МДЛП"> ФГИС МДЛП</label>
+                <label class="option"><input type="checkbox" class="srv-new-class" data-name="ДИТ, Портал поставщиков"> ДИТ, Портал поставщиков (zakupki.mos.ru)</label>
+            </div>
+
+            <div class="scroll-container" id="selected-list">
+                </div>
+        </div>
+        
         <button onclick="goNext()">Далее</button>
     </div>
 
     <div id="step-2" class="step">
-        <h2>Выберите направления</h2>
+        <h2>Выберите направления сдачи отчетности</h2>
         <label class="option"><input type="checkbox" class="dir-003" data-name="ФНС"> ФНС</label>
         <label class="option"><input type="checkbox" class="dir-003" data-name="Росстат"> Росстат</label>
         <label class="option"><input type="checkbox" class="dir-003" data-name="ФТС"> ФТС</label>
@@ -55,93 +75,10 @@
             <span id="total">0</span>
             <div id="details" class="details"></div>
         </div>
-        <button onclick="location.reload()" style="background:#6c757d">Начать заново</button>
+        <button onclick="location.reload()" class="btn-reset">Начать заново</button>
     </div>
 </div>
 
-<script>
-    function goNext() {
-        if (document.getElementById('srv-1c').checked || document.getElementById('srv-astral').checked) {
-            document.getElementById('step-1').classList.remove('active');
-            document.getElementById('step-2').classList.add('active');
-        } else {
-            calculate();
-        }
-    }
-
-    function calculate() {
-        const s = {
-            c1: document.getElementById('srv-1c').checked,
-            astral: document.getElementById('srv-astral').checked,
-            doki: document.getElementById('srv-doki').checked,
-            edo: document.getElementById('srv-edo').checked,
-            cz: document.getElementById('srv-cz').checked,
-            egais: document.getElementById('srv-egais').checked,
-            t44: document.getElementById('srv-t44').checked,
-            t223: document.getElementById('srv-t223').checked
-        };
-        const d = {
-            f003: Array.from(document.querySelectorAll('.dir-003:checked')).map(i => i.getAttribute('data-name')),
-            sfr: document.getElementById('dir-sfr').checked
-        };
-
-        let total = 0;
-        let resLines = [];
-        
-        // ОПРЕДЕЛЕНИЕ МЕТОДА (ЛОГИКА ПРИОРИТЕТОВ)
-        let mainMethod = (s.c1 || (s.edo && s.cz)) ? "1С:Отчетность" : "Астрал Доверенность";
-
-        // 1. ЕИС (44-ФЗ)
-        if (s.t44) {
-            total++;
-            resLines.push(`• <b>1 МЧД — Формат ЕИС</b> для: Торги по 44-ФЗ (ЕИС).<br>Делается через: <span class="method">Личный кабинет ЕИС</span>`);
-        }
-
-        // 2. СФР
-        if (d.sfr) {
-            total++;
-            resLines.push(`• <b>1 МЧД — Формат СФР</b> для: СФР.<br>Делается через: <span class="method">${mainMethod}</span>`);
-        }
-
-        // 3. Формат 003 (Свободная форма)
-        let freeList = [];
-        if (s.t223) freeList.push("Торги по 223-ФЗ");
-        if (s.t223 && s.doki) freeList.push("Доки");
-        
-        // ЭДО как свободная форма: если только ЭДО, или ЭДО + 223
-        let edoOnly = s.edo && !s.c1 && !s.astral && !s.cz && !s.egais && !s.doki && d.f003.length === 0;
-        let edoInFree = (s.edo && s.t223) || edoOnly;
-        if (edoInFree) freeList.push("1С:ЭДО");
-
-        if (freeList.length > 0) {
-            total++;
-            let freeMethod = mainMethod;
-            // Условие для чистого ЭДО
-            if (freeList.length === 1 && freeList[0] === "1С:ЭДО" && !s.c1 && !s.astral && !s.cz) {
-                freeMethod = "1С-ЭДО";
-            }
-            resLines.push(`• <b>1 МЧД — Формат 003 (полномочия в свободной форме)</b> для: ${freeList.join(", ")}.<br>Делается через: <span class="method">${freeMethod}</span>`);
-        }
-
-        // 4. Формат 003 (Классификатор)
-        let classList = [...d.f003];
-        if (s.cz) classList.push("Честный знак");
-        if (s.egais) classList.push("ЕГАИС");
-        if (s.doki && !s.t223) classList.push("Доки");
-        
-        // ЭДО попадает в классификатор, если это не свободная форма (например, ЭДО + ЧЗ или ЭДО + Отчетность)
-        if (s.edo && !edoInFree) classList.push("1С:ЭДО");
-
-        if (classList.length > 0) {
-            total++;
-            resLines.push(`• <b>1 МЧД — Формат 003 (полномочия из классификатора)</b> для: ${classList.join(", ")}.<br>Делается через: <span class="method">${mainMethod}</span>`);
-        }
-
-        document.getElementById('total').innerText = total;
-        document.getElementById('details').innerHTML = resLines.join("<br><br>");
-        document.querySelectorAll('.step').forEach(st => st.classList.remove('active'));
-        document.getElementById('step-3').classList.add('active');
-    }
-</script>
+<script src="script.js"></script>
 </body>
 </html>

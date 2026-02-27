@@ -1,0 +1,202 @@
+body { 
+    font-family: 'Segoe UI', sans-serif; 
+    background: #f4f7f9; 
+    display: flex; 
+    justify-content: center; 
+    padding: 20px; 
+}
+
+.card { 
+    background: white; 
+    padding: 30px; 
+    border-radius: 15px; 
+    width: 100%; 
+    max-width: 900px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+}
+
+h2 { 
+    font-size: 19px; 
+    color: #333; 
+    text-align: center; 
+    margin-bottom: 20px; 
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 10px; 
+}
+
+.step { display: none; }
+.step.active { display: block; }
+
+/* Контейнер для двух колонок */
+.selection-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.option { 
+    display: flex; 
+    align-items: center; 
+    padding: 12px; 
+    margin-bottom: 8px; 
+    background: #f9f9f9; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+input[type="checkbox"] { 
+    width: 18px; 
+    height: 18px; 
+    margin-right: 12px; 
+}
+
+button { 
+    width: 100%; 
+    padding: 15px; 
+    background: #007bff; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    margin-top: 15px; 
+}
+
+.btn-reset { 
+    background: #6c757d; 
+}
+
+.result-box { 
+    margin-top: 20px; 
+    padding: 20px; 
+    border: 2px solid #28a745; 
+    border-radius: 12px; 
+}
+
+#total { 
+    font-size: 50px; 
+    font-weight: bold; 
+    color: #28a745; 
+    text-align: center; 
+    display: block; 
+}
+
+.res-head { 
+    text-align: center; 
+    color: #000; 
+    font-weight: normal; 
+    margin-bottom: 5px; 
+}
+
+.details { 
+    font-size: 14px; 
+    color: #444; 
+    line-height: 1.6; 
+    margin-top: 15px; 
+}
+
+.method { 
+    font-weight: bold; 
+    color: #d63031; 
+}
+
+/* --- СОВРЕМЕННЫЙ ПОИСК --- */
+.search-container {
+    margin-bottom: 15px;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#srv-search {
+    width: 100%;
+    padding: 12px;
+    padding-left: 42px; /* Увеличено под SVG */
+    border: 1px solid #90a0ad; 
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+/* Контейнер для иконок лупы и крестика */
+#search-icon-container {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: all 0.2s ease;
+}
+
+#search-icon-container svg {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Состояние: Лупа */
+#icon-search {
+    color: #2f8ef5;
+    opacity: 1;
+}
+
+/* Состояние: Крестик (скрыт по умолчанию) */
+#icon-clear {
+    color: #ff4d4d;
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+}
+
+/* Анимация при активации поиска (класс добавляется через JS) */
+#search-icon-container.active-clear {
+    cursor: pointer;
+}
+
+#search-icon-container.active-clear #icon-search {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+#search-icon-container.active-clear #icon-clear {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* --- КОЛОНКИ И СКРОЛЛ --- */
+.scroll-container {
+    flex: 1; 
+    height: 500px; 
+    overflow-y: auto;
+    border: 2px dashed #eee; 
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.option.checked {
+    background: #e8f5e9; 
+    border-color: #28a745;
+}
+
+#selected-list .option {
+    position: static;
+    box-shadow: none;
+}
