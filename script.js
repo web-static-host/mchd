@@ -1,16 +1,29 @@
+// Храним изначальный порядок элементов
+let initialOrder = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('services-list');
+    if (container) {
+        // Запоминаем элементы в том порядке, в котором они идут в HTML
+        initialOrder = Array.from(container.querySelectorAll('.option'));
+    }
+});
+
 // 1. Функция поиска с динамической иконкой (лупа/крестик)
 function filterServices() {
     const input = document.getElementById('srv-search');
     const query = input.value.toLowerCase();
-    const options = document.querySelectorAll('#services-list .option');
     const iconContainer = document.getElementById('search-icon-container');
 
-    // Переключаем класс для смены иконок
     if (query.length > 0) {
         iconContainer.classList.add('active-clear');
     } else {
         iconContainer.classList.remove('active-clear');
     }
+    
+    // Фильтруем только те элементы, которые сейчас находятся в левом списке
+    const leftBox = document.getElementById('services-list');
+    const options = leftBox.querySelectorAll('.option');
     
     options.forEach(option => {
         const text = option.textContent.toLowerCase();
@@ -43,8 +56,22 @@ document.addEventListener('change', function(e) {
                 rightBox.appendChild(label); // В конец правой колонки
             } else {
                 label.classList.remove('checked');
-                leftBox.appendChild(label);  // Назад в левую
-                sortLeftList();              // Сортируем по алфавиту
+                
+                // ЛОГИКА ВОЗВРАТА НА СВОЕ МЕСТО:
+                // Находим индекс текущего элемента в изначальном массиве
+                const currentIndex = initialOrder.indexOf(label);
+                // Ищем ближайший следующий элемент из изначального списка, который сейчас в левом боксе
+                const nextElement = initialOrder.slice(currentIndex + 1).find(el => el.parentElement === leftBox);
+
+                if (nextElement) {
+                    leftBox.insertBefore(label, nextElement);
+                } else {
+                    leftBox.appendChild(label);
+                }
+
+                // Синхронизируем видимость с текущим поиском
+                const query = document.getElementById('srv-search').value.toLowerCase();
+                label.style.display = label.textContent.toLowerCase().includes(query) ? "flex" : "none";
             }
         } 
         // Шаг 2: Направления (старая логика подсветки)
@@ -57,18 +84,6 @@ document.addEventListener('change', function(e) {
         }
     }
 });
-
-// Вспомогательная функция: сортировка левого списка
-function sortLeftList() {
-    const container = document.getElementById('services-list');
-    const items = Array.from(container.querySelectorAll('.option'));
-    
-    items.sort((a, b) => {
-        return a.textContent.trim().localeCompare(b.textContent.trim());
-    });
-    
-    items.forEach(item => container.appendChild(item));
-}
 
 // 3. Переход между шагами
 function goNext() {
@@ -102,7 +117,14 @@ function calculate() {
     let total = 0;
     let resLines = [];
     
-    let mainMethod = (s.c1 || (s.edo && (s.cz || s.newClass.length > 0))) ? "1С:Отчетность" : "Астрал Доверенность";
+    let mainMethod = "";
+    if (s.astral && !s.c1) {
+        mainMethod = "Астрал Доверенность";
+    } else if (s.c1 || (s.edo && (s.cz || s.newClass.length > 0))) {
+        mainMethod = "1С:Отчетность";
+    } else {
+        mainMethod = "Астрал Доверенность";
+    }
 
     if (s.t44) {
         total++;
